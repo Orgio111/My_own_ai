@@ -2,6 +2,7 @@ import { Mic, MicOff } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { useVoice } from '../hooks/useVoice'
 import { voiceRespond } from '../api/client'
+import { desktop } from '../desktop'
 
 export function VoiceButton() {
   const { listening, listenOnce, stop, speak, supported } = useVoice()
@@ -28,7 +29,12 @@ export function VoiceButton() {
       }
     }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    // Electron global shortcut → main process IPC
+    const off = desktop?.on('arajim:voice-trigger', trigger)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      off?.()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

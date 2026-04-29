@@ -1,12 +1,35 @@
 {
   "name": "arajim-desktop",
   "version": "0.1.0",
-  "description": "Arajim — desktop overlay (Electron)",
+  "description": "Arajim — desktop app (Electron). OS-integrated wrapper around the Arajim dashboard.",
   "main": "electron/main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "NODE_ENV=development electron .",
+    "start:prod": "electron .",
+    "bundle": "node ./scripts/bundle-frontend.js",
+    "build": "npm run bundle && electron-builder",
+    "build:dir": "npm run bundle && electron-builder --dir"
+  },
+  "build": {
+    "appId": "ai.arajim.desktop",
+    "productName": "Arajim",
+    "asar": true,
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "electron/**/*",
+      "dist/**/*",
+      "icon.png",
+      "package.json"
+    ],
+    "linux":   { "target": ["AppImage", "deb"], "icon": "icon.png", "category": "Utility" },
+    "mac":     { "target": ["dmg", "zip"],      "icon": "icon.png", "category": "public.app-category.productivity" },
+    "win":     { "target": ["nsis", "portable"], "icon": "icon.png" }
   },
   "devDependencies": {
-    "electron": "^32.1.0"
+    "electron": "^32.1.0",
+    "electron-builder": "^25.0.5"
   }
 }

@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
+import { WS_URL } from '../api/client'
 
 export type WSMessage = { topic: string; [k: string]: any }
 
-export function useWebSocket(url = '/ws') {
+export function useWebSocket(url: string = WS_URL) {
   const [connected, setConnected] = useState(false)
   const [messages, setMessages] = useState<WSMessage[]>([])
   const wsRef = useRef<WebSocket | null>(null)
