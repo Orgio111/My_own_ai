@@ -121,6 +121,14 @@ class NvidiaClient:
                 if token:
                     yield token
 
+    async def list_models(self) -> List[Dict[str, Any]]:
+        """Fetch the live NVIDIA model catalog (OpenAI-compatible /models endpoint)."""
+        r = await self._client.get(f"{self.base}/models", headers=self._headers)
+        if r.status_code >= 400:
+            raise NvidiaError(f"models {r.status_code}: {r.text[:400]}")
+        data = r.json()
+        return data.get("data", data) if isinstance(data, dict) else data
+
     async def embed(self, model: str, texts: List[str]) -> List[List[float]]:
         r = await self._client.post(
             f"{self.base}/embeddings",

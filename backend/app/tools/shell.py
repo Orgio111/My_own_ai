@@ -1,9 +1,13 @@
-"""Shell tool — runs commands restricted to an allow-list of binaries."""
+"""Shell tool — runs commands restricted to an allow-list of binaries.
+
+Runs via exec (no shell), so shell metacharacters (&, |, ;, $, `, redirects)
+cannot be used to chain disallowed binaries.
+"""
 from __future__ import annotations
 
 import asyncio
 import shlex
-from typing import Dict
+from typing import Dict, List
 
 from app.agents.executor import register_tool
 from app.config import settings
@@ -13,7 +17,12 @@ class ShellError(RuntimeError):
     pass
 
 
-def _check(cmd: str) -> str:
+_FORBIDDEN = ("&", "|", ";", "$(", "`", ">", "<", "\n")
+
+
+def _check(cmd: str) -> List[str]:
+    if any(tok in cmd for tok in _FORBIDDEN):
+        raise ShellError("shell metacharacters are not allowed")
     parts = shlex.split(cmd)
     if not parts:
         raise ShellError("empty command")
@@ -21,13 +30,13 @@ def _check(cmd: str) -> str:
     allowed = settings.shell_allowed_list
     if bin_name not in allowed:
         raise ShellError(f"binary not allowed: {bin_name}. allow-list: {allowed}")
-    return cmd
+    return parts
 
 
 async def run(cmd: str, timeout: float = 60.0) -> Dict[str, str]:
-    safe = _check(cmd)
-    proc = await asyncio.create_subprocess_shell(
-        safe,
+    parts = _check(cmd)
+    proc = await asyncio.create_subprocess_exec(
+        *parts,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )

@@ -57,6 +57,14 @@ export async function fetchModels() {
   return (await fetch('/api/system/models')).json()
 }
 
+export type AvailableModel = { id: string; role: string; owned_by?: string; created?: number }
+
+export async function fetchAvailableModels(refresh = false): Promise<AvailableModel[]> {
+  const r = await fetch(`/api/system/models/available${refresh ? '?refresh=true' : ''}`)
+  if (!r.ok) throw new Error(await r.text())
+  return r.json()
+}
+
 export async function fetchUsage() {
   return (await fetch('/api/system/usage')).json()
 }

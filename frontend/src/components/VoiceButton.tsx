@@ -1,33 +1,36 @@
 import { Mic, MicOff } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useVoice } from '../hooks/useVoice'
 import { voiceRespond } from '../api/client'
 
 export function VoiceButton() {
-  const { listening, transcript, start, stop, speak, supported } = useVoice()
+  const { listening, listenOnce, stop, speak, supported } = useVoice()
+  const busy = useRef(false)
+
+  const trigger = async () => {
+    if (busy.current) { stop(); return }
+    busy.current = true
+    try {
+      const text = await listenOnce(7000)
+      if (!text) return
+      const r = await voiceRespond(text)
+      speak(r.text, r.lang)
+    } finally {
+      busy.current = false
+    }
+  }
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
         e.preventDefault()
-        listening ? stop() : start()
+        trigger()
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [listening, start, stop])
-
-  const trigger = async () => {
-    if (listening) { stop(); return }
-    start()
-    setTimeout(async () => {
-      stop()
-      const text = transcript.trim()
-      if (!text) return
-      const r = await voiceRespond(text)
-      speak(r.text, r.lang)
-    }, 5000)
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (!supported) return null
 

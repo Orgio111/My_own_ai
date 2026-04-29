@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Mic, X } from 'lucide-react'
 import { voiceRespond } from '../api/client'
 import { useVoice } from '../hooks/useVoice'
@@ -6,7 +6,8 @@ import { useVoice } from '../hooks/useVoice'
 export function FloatingPanel() {
   const [open, setOpen] = useState(false)
   const [reply, setReply] = useState('')
-  const { listening, transcript, start, stop, speak, supported } = useVoice()
+  const { listening, transcript, listenOnce, speak, supported } = useVoice()
+  const busy = useRef(false)
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -19,17 +20,18 @@ export function FloatingPanel() {
   }, [])
 
   const oneClick = async () => {
-    if (!supported) return
+    if (!supported || busy.current) return
+    busy.current = true
     setReply('')
-    start()
-    setTimeout(async () => {
-      stop()
-      const text = transcript.trim()
+    try {
+      const text = await listenOnce(7000)
       if (!text) return
       const r = await voiceRespond(text)
       setReply(r.text)
       speak(r.text, r.lang)
-    }, 4500)
+    } finally {
+      busy.current = false
+    }
   }
 
   if (!open) {

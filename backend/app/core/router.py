@@ -51,12 +51,36 @@ REGISTRY: Dict[str, ModelCard] = {
 
 
 def pick(task_class: str = "reasoning", *, override: Optional[str] = None) -> ModelCard:
-    if override and override in REGISTRY:
-        return REGISTRY[override]
+    """Pick a model. If `override` is supplied it is honoured even when not in REGISTRY
+    (so the user can select any NVIDIA-hosted model from the live catalog)."""
+    if override:
+        if override in REGISTRY:
+            return REGISTRY[override]
+        # synthetic card for an unknown but explicitly requested model
+        card = ModelCard(id=override, role=_infer_role(override), ctx=128_000, strengths=["user-selected"])
+        REGISTRY[override] = card
+        return card
     for card in REGISTRY.values():
         if card.role == task_class and card.healthy:
             return card
     return REGISTRY[settings.model_reasoning]
+
+
+def _infer_role(model_id: str) -> str:
+    m = model_id.lower()
+    if "embed" in m:
+        return "embed"
+    if "vision" in m or "vl" in m:
+        return "vision"
+    if "code" in m or "coder" in m:
+        return "code"
+    if any(t in m for t in ("8b", "mini", "small", "fast", "haiku")):
+        return "fast"
+    return "reasoning"
+
+
+def upsert(card: ModelCard) -> None:
+    REGISTRY[card.id] = card
 
 
 def mark_unhealthy(model_id: str) -> None:
