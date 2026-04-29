@@ -4,12 +4,13 @@ from __future__ import annotations
 import asyncio
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 
 from app.api import agents, chat, memory, system, voice, ws
 from app.config import settings
+from app.core.nvidia_client import NvidiaError
 from app.core.supervisor import Supervisor
 from app.utils.logger import log
 
@@ -42,6 +43,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.exception_handler(NvidiaError)
+async def _nvidia_error_handler(_: Request, exc: NvidiaError):
+    msg = str(exc)
+    status = 502
+    if "NVIDIA_API_KEY not configured" in msg:
+        status = 503
+    return JSONResponse(status_code=status, content={"error": "nvidia_api", "detail": msg})
+
 
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 app.include_router(agents.router, prefix="/api/agents", tags=["agents"])
