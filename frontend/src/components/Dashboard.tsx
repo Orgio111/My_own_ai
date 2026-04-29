@@ -7,14 +7,21 @@ import { UsageMeter } from './UsageMeter'
 import { ModelSelector } from './ModelSelector'
 import { VoiceButton } from './VoiceButton'
 import { FloatingPanel } from './FloatingPanel'
+import { TitleBar } from './TitleBar'
 import { useWebSocket } from '../hooks/useWebSocket'
+import { isDesktop } from '../desktop'
 
 export function Dashboard() {
   const [model, setModel] = useState<string | null>(null)
   const { connected, messages } = useWebSocket('/ws')
 
   return (
-    <div style={{ display: 'grid', gridTemplateRows: '64px 1fr', height: '100vh' }}>
+    <div style={{
+      display: 'grid',
+      gridTemplateRows: isDesktop ? '36px 64px 1fr' : '64px 1fr',
+      height: '100vh',
+    }}>
+      <TitleBar />
       <header style={{
         display: 'flex', alignItems: 'center', gap: 16, padding: '0 20px',
         borderBottom: '1px solid var(--border)', backdropFilter: 'blur(8px)',

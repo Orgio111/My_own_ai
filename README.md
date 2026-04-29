@@ -47,7 +47,31 @@ Then open:
 
 - **Dashboard** → http://localhost:5173
 - **API docs** → http://localhost:8000/docs
-- **Floating overlay** → run `cd desktop && npm start`
+- **Floating overlay** → run `cd desktop && npm install && npm start`
+
+### Desktop App
+
+The desktop wrapper is a full Electron app with frameless custom titlebar,
+single-instance lock, persistent window-state, system tray, native menu,
+global hotkeys, and OS notifications.
+
+```bash
+cd desktop
+npm install
+
+# dev — connects to the Vite dev server at :5173
+npm start
+
+# bundle the frontend, then package an installer
+npm run build           # AppImage / dmg / nsis depending on platform
+npm run build:dir       # unpacked app, fastest iteration
+```
+
+Global hotkeys:
+
+- `Ctrl/Cmd + Alt + A` — show / hide the main window
+- `Ctrl/Cmd + Shift + O` — toggle the floating overlay (always-on-top)
+- `Ctrl/Cmd + Shift + A` — one-click voice (listens, understands, executes)
 
 ## Repository Layout
 

@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     port: int = 8000
     log_level: str = "INFO"
     debug: bool = True
-    cors_origins: str = "http://localhost:5173,http://localhost:3000"
+    cors_origins: str = "http://localhost:5173,http://localhost:3000,app://arajim,file://"
 
     # Agent
     default_agent_mode: str = "guided"
