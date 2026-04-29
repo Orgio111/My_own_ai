@@ -1,0 +1,29 @@
+services:
+  arajim-backend:
+    build:
+      context: ./backend
+      dockerfile: ../docker/backend.Dockerfile
+    image: arajim/backend:0.1
+    container_name: arajim-backend
+    env_file: .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./data:/data
+    restart: unless-stopped
+
+  arajim-frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../docker/frontend.Dockerfile
+    image: arajim/frontend:0.1
+    container_name: arajim-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - arajim-backend
+    restart: unless-stopped

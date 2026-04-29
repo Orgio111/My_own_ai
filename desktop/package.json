@@ -1,0 +1,12 @@
+{
+  "name": "arajim-desktop",
+  "version": "0.1.0",
+  "description": "Arajim — desktop overlay (Electron)",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^32.1.0"
+  }
+}

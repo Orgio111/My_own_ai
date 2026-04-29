@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Node
+node_modules/
+dist/
+build/
+.vite/
+.parcel-cache/
+
+# Env / secrets
+.env
+.env.local
+*.key
+*.pem
+
+# Data
+data/
+storage/
+*.db
+*.sqlite
+*.faiss
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

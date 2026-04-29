@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 160" role="img" aria-label="Arajim">
+  <defs>
+    <linearGradient id="arajimGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"  stop-color="#76B900"/>   <!-- NVIDIA green -->
+      <stop offset="50%" stop-color="#00E5FF"/>
+      <stop offset="100%" stop-color="#7C5CFF"/>
+    </linearGradient>
+    <radialGradient id="arajimGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"  stop-color="#76B900" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#76B900" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+  </defs>
+
+  <!-- Glow halo -->
+  <circle cx="80" cy="80" r="64" fill="url(#arajimGlow)"/>
+
+  <!-- Hex mark (AI core) -->
+  <g transform="translate(80 80)">
+    <polygon points="0,-50 43,-25 43,25 0,50 -43,25 -43,-25"
+             fill="none" stroke="url(#arajimGrad)" stroke-width="3"/>
+    <polygon points="0,-32 28,-16 28,16 0,32 -28,16 -28,-16"
+             fill="none" stroke="url(#arajimGrad)" stroke-width="2" opacity="0.7"/>
+    <!-- Stylized A -->
+    <path d="M -16 18 L 0 -22 L 16 18 M -10 6 L 10 6"
+          fill="none" stroke="url(#arajimGrad)" stroke-width="4"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Orbit dot -->
+    <circle cx="0" cy="-50" r="4" fill="#76B900" filter="url(#soft)"/>
+    <circle cx="43" cy="25" r="3" fill="#00E5FF" filter="url(#soft)"/>
+    <circle cx="-43" cy="25" r="3" fill="#7C5CFF" filter="url(#soft)"/>
+  </g>
+
+  <!-- Wordmark -->
+  <g transform="translate(170 75)" font-family="Inter, 'SF Pro Display', system-ui, sans-serif">
+    <text x="0" y="20" font-size="56" font-weight="800"
+          fill="url(#arajimGrad)" letter-spacing="2">Arajim</text>
+    <text x="2" y="50" font-size="13" font-weight="500"
+          fill="#9aa4b2" letter-spacing="6">AUTONOMOUS · AI · OS</text>
+  </g>
+</svg>
